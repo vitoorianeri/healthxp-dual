@@ -12,17 +12,11 @@ class LoginPage {
 
     fill(user) {
 
-        if (user.email) {
-            cy.get('input[name=email]')
-                .clear()
-                .type(user.email)
-        }
+        cy.get('input[name=email]').clear({force: true}).as('email')
+        cy.get('input[name=password]').clear({force: true}).as('password')
 
-        if (user.password) {
-            cy.get('input[name=password]')
-                .clear()
-                .type(user.password)
-        }
+        user.email ? cy.get('@email').type(user.email) : cy.log('empty email')
+        user.password ? cy.get('@password').type(user.password) : cy.log('empty password')
     }
 
     submit() {
