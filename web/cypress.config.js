@@ -17,11 +17,24 @@ module.exports = defineConfig({
 
       on('task', {
 
+        selectStudentID(studentEmail) {
+          return new Promise(function (resolve, reject) {
+            const pool = new Pool(dbConfig)
+            const query = 'SELECT id FROM students WHERE email = $1;'
+
+            pool.query(query, [studentEmail], function (error, result) {
+              if (error) {
+                reject({ error: error })
+              }
+              resolve({ success: result })
+              pool.end()
+            })
+          })
+        },
+
         deleteStudent(studentEmail) {
           return new Promise(function (resolve, reject) {
-
             const pool = new Pool(dbConfig)
-
             const query = 'DELETE FROM students WHERE email = $1;'
 
             pool.query(query, [studentEmail], function (error, result) {
@@ -31,15 +44,11 @@ module.exports = defineConfig({
               resolve({ success: result })
               pool.end()
             })
-
           })
-
-
-
         },
+
         resetStudent(student) {
           return new Promise(function (resolve, reject) {
-
             const pool = new Pool(dbConfig)
 
             const query = `
@@ -61,15 +70,9 @@ module.exports = defineConfig({
               resolve({ success: result })
               pool.end()
             })
-
           })
-
-
-
         }
-
       })
-
     },
   },
 });
