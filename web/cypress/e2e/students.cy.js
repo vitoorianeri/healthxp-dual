@@ -8,7 +8,9 @@ describe('alunos', () => {
 
         const student = students.create
 
-        cy.task('deleteStudent', student.email)
+        //cy.task('deleteStudent', student.email)
+
+        cy.deleteStudent(student.email)
 
         cy.adminLogin()
 
@@ -24,7 +26,8 @@ describe('alunos', () => {
 
         const student = students.duplicate
 
-        cy.task('resetStudent', student)
+        //cy.task('resetStudent', student)
+        cy.resetStudent(student)
 
         cy.adminLogin()
 
@@ -38,7 +41,9 @@ describe('alunos', () => {
     it('deve remover um aluno sem matrícula', () => {
         const student = students.remove
 
-        cy.task('resetStudent', student)
+        //cy.task('resetStudent', student)
+
+        cy.resetStudent(student)
 
         cy.adminLogin()
 
