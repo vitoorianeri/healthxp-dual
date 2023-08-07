@@ -1,16 +1,19 @@
+require('dotenv').config()
 const { Pool } = require('pg')
 
+
 const pool = new Pool({
-    host: 'tuffi.db.elephantsql.com',
-    user: 'rsbkkdia',
-    password: 'lL1AR65CthUSwIj0g8DPEr8LO3099aZi',
-    database: 'rsbkkdia',
-    port: 5432
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT
 })
 
 const deleteAndCreateStudent = (req, res) => {
 
     const student = req.body
+
 
     const query = `
             WITH add AS (
@@ -46,17 +49,29 @@ const deleteStudentByEmail = (req, res) => {
     })
 }
 
-const selectStudent = (req, res) => {
+const insertEnrollByEmail = (req, res) => {
 
-    const studentEmail = req.params.email
+    const {email, plan_id, price} = req.body
 
-    const query = 'SELECT id FROM students WHERE email = $1;'
+    const query = `
+    INSERT INTO enrollments (enrollment_code, student_id, plan_id, credit_card, status, price)
+    SELECT
+    'XPTO123' as enrollment_code,
+    id as student_id,
+    $2 as plan_id,
+    '4242' as credit_card,
+    true as status,
+    $3 as price
+    FROM students
+    WHERE email = $1;
+    `
+    const values = [email, plan_id, price]
 
-    pool.query(query, [studentEmail], function (error, result) {
+    pool.query(query, values, function (error, result) {
         if (error) {
             return res.status(500).json(error)
         }
-        res.status(200).json(result.rows[0])
+        res.status(201).end()
     })
 
 }
@@ -64,5 +79,5 @@ const selectStudent = (req, res) => {
 module.exports = {
     deleteAndCreateStudent,
     deleteStudentByEmail,
-    selectStudent
+    insertEnrollByEmail
 }
